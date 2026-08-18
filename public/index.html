@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ContextGate — Evidence before action</title>
+  <meta name="description" content="Evidence-backed pre-execution control for enterprise AI agents.">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="grain"></div>
+  <header>
+    <a class="brand" href="#"><span class="mark">CG</span><span>ContextGate</span></a>
+    <div class="live"><i></i><span id="dbLabel">Connecting to evidence graph</span></div>
+    <button class="ghost" id="tour">Replay decision</button>
+  </header>
+  <main>
+    <section class="hero">
+      <div>
+        <p class="eyebrow">PRE-EXECUTION CONTROL LAYER</p>
+        <h1>Evidence before<br><em>agent action.</em></h1>
+        <p class="lead">ContextGate stops enterprise AI from acting on stale, contradictory, or unsupported context—before the damage is done.</p>
+      </div>
+      <div class="hero-metric"><b>LIVE</b><span>evidence-gated actions</span><small>No graph path, no execution</small></div>
+    </section>
+
+    <section class="workspace">
+      <aside>
+        <p class="label">PENDING ACTIONS</p>
+        <div id="actionList"></div>
+        <div class="mini-stats">
+          <div><b id="entityCount">—</b><span>demo entities</span></div><div><b id="claimCount">—</b><span>demo claims</span></div>
+        </div>
+      </aside>
+      <div class="stage">
+        <div class="stage-head">
+          <div><span class="crumb">SALES AGENT / GMAIL</span><h2 id="actionTitle">Send launch confirmation</h2></div>
+          <span class="policy">POLICY · CG-TEMPORAL-EVIDENCE-v1</span>
+        </div>
+        <div class="action-card">
+          <div class="agent-icon">A</div>
+          <div><span class="to">TO: ACME CUSTOMER TEAM</span><p id="payload"></p></div>
+          <button id="execute">Execute action <span>→</span></button>
+        </div>
+        <div class="gate-line"><span>CONTEXTGATE</span></div>
+        <div id="result" class="result waiting">
+          <div class="decision-orb"><span>?</span></div>
+          <div><p class="label">DECISION</p><h3>Ready to verify</h3><p>Run the proposed action through the temporal evidence graph.</p></div>
+          <div class="confidence"><b>—</b><span>confidence</span></div>
+        </div>
+        <div class="evidence-grid">
+          <div class="panel timeline-panel">
+            <div class="panel-title"><span>Temporal evidence</span><b id="evidenceCount">0 sources</b></div>
+            <div id="timeline" class="timeline empty">Evidence appears after verification.</div>
+          </div>
+          <div class="panel graph-panel">
+            <div class="panel-title"><span>Decision path</span><b>HydraDB traversal</b></div>
+            <div id="graph" class="graph"><div class="empty">No traversal yet.</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="proof">
+      <p class="eyebrow">WHY A GRAPH, NOT ANOTHER PROMPT?</p>
+      <div class="proof-grid">
+        <article><span>01</span><h3>Identity</h3><p>@soham and S. Ratnaparkhi resolve to one accountable person—with an explanation.</p></article>
+        <article><span>02</span><h3>Time</h3><p>New facts supersede old ones without erasing what the company believed before.</p></article>
+        <article><span>03</span><h3>Evidence</h3><p>Every decision exposes the exact multi-hop path that authorized or blocked it.</p></article>
+        <article><span>04</span><h3>Abstention</h3><p>No path means no invented answer. The agent pauses and asks a human.</p></article>
+      </div>
+    </section>
+  </main>
+  <footer><span>CONTEXTGATE / HACK HYDRA 2026</span><span>Open source · Evidence first</span></footer>
+  <script type="module" src="/app.js"></script>
+</body></html>

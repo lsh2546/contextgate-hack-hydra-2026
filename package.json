@@ -1,0 +1,14 @@
+{
+  "name": "contextgate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Evidence-backed pre-execution control for enterprise AI agents, powered by HydraDB.",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test",
+    "evaluate:live": "node scripts/evaluate-live.js"
+  },
+  "engines": { "node": ">=20" },
+  "license": "Apache-2.0"
+}

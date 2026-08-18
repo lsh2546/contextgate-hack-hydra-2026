@@ -1,0 +1,105 @@
+name: Live HydraDB verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  live-hydradb:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run unit and contract tests
+        run: npm test
+
+      - name: Start official HydraDB image
+        run: |
+          mkdir -p .hydradb/store .hydradb/cache
+          printf '%s\n' 'local-development-token-32-bytes' > .hydradb/auth-token
+          docker pull ghcr.io/hydra-db/hydradb:latest
+          docker run -d --name hydradb \
+            --user "$(id -u):$(id -g)" \
+            -p 7687:7687 -p 8443:8443 -p 9090:9090 \
+            -v "$PWD/.hydradb:/data" \
+            -e CLOUD_PROVIDER=local \
+            -e LOCAL_PATH=/data/store \
+            -e GRAPH_NAMESPACE=default \
+            -e GRAPH_ID=default \
+            -e GRAPH_CELL_ID=cell-0 \
+            -e GRAPH_CELLS=cell-0 \
+            -e GRAPH_NODE_ID=node-0 \
+            -e GRAPH_BOLT_NODE_ADDRESSES=node-0=127.0.0.1:7687 \
+            -e GRAPH_ADVERTISED_BOLT_ADDR=127.0.0.1:7687 \
+            -e GRAPH_DATA_CACHE_DIR=/data/cache \
+            -e GRAPH_AUTH_TOKEN_FILE=/data/auth-token \
+            -e GRAPH_ALLOW_PLAINTEXT=true \
+            -e RUST_MIN_STACK=33554432 \
+            ghcr.io/hydra-db/hydradb:latest
+
+      - name: Wait for HydraDB readiness
+        run: |
+          for attempt in $(seq 1 90); do
+            if curl --fail --silent http://127.0.0.1:9090/readyz >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs hydradb
+          exit 1
+
+      - name: Start ContextGate in HydraDB-only mode
+        env:
+          HYDRADB_MODE: hydra
+          HYDRADB_URL: http://127.0.0.1:8443
+        run: |
+          node src/server.js > evidence/contextgate-live.log 2>&1 &
+          echo $! > evidence/contextgate.pid
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:4173/api/state >/dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat evidence/contextgate-live.log
+          exit 1
+
+      - name: Seed demo graph through HydraDB HTTP OpenCypher
+        run: curl --fail --show-error --request POST http://127.0.0.1:4173/api/seed
+
+      - name: Verify live ALLOW BLOCK and CLARIFY decisions
+        run: node scripts/verify-live-decisions.js
+
+      - name: Run 30-case external live evaluation
+        env:
+          HYDRADB_MODE: hydra
+          HYDRADB_URL: http://127.0.0.1:8443
+        run: npm run evaluate:live
+
+      - name: Preserve HydraDB container evidence
+        if: always()
+        run: docker logs hydradb > evidence/hydradb-container.log 2>&1 || true
+
+      - name: Upload live evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contextgate-live-hydradb-evidence
+          path: |
+            evidence/hydradb-roundtrip.jsonl
+            evidence/live-evaluation.json
+            evidence/live-decisions.json
+            evidence/contextgate-live.log
+            evidence/hydradb-container.log
+          if-no-files-found: warn
+

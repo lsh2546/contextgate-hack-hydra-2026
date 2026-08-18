@@ -1,0 +1,35 @@
+# Hack Hydra submission draft
+
+## Project name
+
+ContextGate
+
+## Short description
+
+ContextGate is an evidence-backed pre-execution control layer that stops enterprise AI agents from sending messages or changing business systems using stale, contradictory, or unsupported context.
+
+## Problem
+
+Enterprise agents increasingly act across email, CRM, project management, and code systems. Retrieval can find plausible context, but it does not prove that a fact is current, authoritative, or safe to act on. A confident agent can therefore send a customer an obsolete launch date or update a system using a claim the company never established.
+
+## What we built
+
+ContextGate intercepts an action, extracts its factual assertion, and traverses a temporal evidence graph. It returns `ALLOW`, `BLOCK`, or `CLARIFY`, accompanied by the exact sources and relationships behind the decision. The demo shows a stale customer email being blocked, a corrected email being allowed, and an unsupported CRM update being routed to a human.
+
+## How HydraDB is used
+
+HydraDB stores cross-application entities, claims, sources, aliases, and temporal relationships. ContextGate writes and queries the graph through HydraDB's authenticated HTTP OpenCypher endpoint. `SUPERSEDES`, `SUPPORTS`, `CONTRADICTS`, `DERIVED_FROM`, and `SAME_AS` relationships preserve evidence lineage. Snapshot-consistent traversal makes the authorization decision explainable and reproducible. Removing HydraDB removes identity resolution, temporal lineage, and the multi-hop evidence path that the gate requires.
+
+## Track
+
+Track 1 — Enterprise Context & Ontology
+
+## Technology
+
+HydraDB OSS, OpenCypher HTTP API, Node.js, browser-native JavaScript and CSS.
+
+## Links
+
+- Public repository: TBD
+- Demo: TBD
+- Video: TBD
