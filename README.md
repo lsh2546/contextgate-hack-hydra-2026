@@ -4,6 +4,8 @@
 
 ContextGate stops an enterprise agent before it sends an email, updates a CRM, or changes a project record using stale, contradictory, or unsupported information. It returns one explainable decision:
 
+**[Open the public HydraDB-backed demo](https://contextgate-u4dj5xorbq-du.a.run.app/)**
+
 - `ALLOW` — authoritative current evidence supports the action.
 - `BLOCK` — a temporal or contradictory evidence path invalidates it.
 - `CLARIFY` — the graph cannot justify the action, so a human must decide.
@@ -40,6 +42,8 @@ curl -X POST http://127.0.0.1:4173/api/seed
 ```
 
 Open `http://127.0.0.1:4173`. Every `ALLOW`, `BLOCK`, and `CLARIFY` decision is computed from claims and relationships read from HydraDB. Successful and failed HTTP round trips are appended to `evidence/hydradb-roundtrip.jsonl` with the query, response, and externally measured elapsed time.
+
+The public Cloud Run deployment runs the app and official HydraDB image as separate containers in one service instance. On cold start, the app waits for HydraDB and seeds the live graph before opening its public port; it never falls back to memory mode.
 
 ## Run with the official HydraDB image
 

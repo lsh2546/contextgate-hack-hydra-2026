@@ -30,6 +30,8 @@ HydraDB OSS, OpenCypher HTTP API, Node.js, browser-native JavaScript and CSS.
 
 ## Links
 
-- Public repository: TBD
-- Demo: TBD
+- Public repository: https://github.com/lsh2546/contextgate-hack-hydra-2026
+- Demo: https://contextgate-u4dj5xorbq-du.a.run.app/
+- Live HydraDB verification: https://github.com/lsh2546/contextgate-hack-hydra-2026/actions/runs/32094568468
+- Public deployment verification: https://github.com/lsh2546/contextgate-hack-hydra-2026/actions/runs/32095547319
 - Video: TBD
