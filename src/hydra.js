@@ -46,7 +46,7 @@ export class HydraDBClient {
     try {
       // HydraDB's current HTTP OpenCypher engine accepts node reads, but not
       // count(n). This query succeeds both before and after the graph is seeded.
-      await this.query("MATCH (n) RETURN n.id AS id LIMIT 1");
+      await this.query("MATCH (n:Claim) RETURN n.id AS id LIMIT 1");
       this.connected = true;
       return { mode: "hydradb", connected: true, label: "HydraDB OpenCypher · causal snapshot" };
     } catch (error) {
