@@ -1,0 +1,253 @@
+{
+  "generatedAt": "2026-08-18T03:08:50.475Z",
+  "suite": "CG-LIVE-EVAL-30-v2",
+  "backend": "HydraDB HTTP OpenCypher",
+  "cases": 30,
+  "uniqueActionIds": 30,
+  "uniqueAssertions": 30,
+  "correct": 30,
+  "falseAuthorizations": 0,
+  "p95ExternalLatencyMs": 5.892582000000004,
+  "results": [
+    {
+      "id": "block-0",
+      "subject": "EvalCustomer-01.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 13.69414599999999
+    },
+    {
+      "id": "allow-0",
+      "subject": "EvalCustomer-01.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 5.447613999999987
+    },
+    {
+      "id": "clarify-0",
+      "subject": "EvalCustomer-01.Launch",
+      "field": "data_residency",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.7677439999999933
+    },
+    {
+      "id": "block-1",
+      "subject": "EvalCustomer-02.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 5.461400000000026
+    },
+    {
+      "id": "allow-1",
+      "subject": "EvalCustomer-02.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 5.871569000000022
+    },
+    {
+      "id": "clarify-1",
+      "subject": "EvalCustomer-02.Launch",
+      "field": "renewal_date",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.784265000000005
+    },
+    {
+      "id": "block-2",
+      "subject": "EvalCustomer-03.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 5.2895579999999995
+    },
+    {
+      "id": "allow-2",
+      "subject": "EvalCustomer-03.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 5.432845999999984
+    },
+    {
+      "id": "clarify-2",
+      "subject": "EvalCustomer-03.Launch",
+      "field": "billing_owner",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.5255000000000223
+    },
+    {
+      "id": "block-3",
+      "subject": "EvalCustomer-04.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 5.5168239999999855
+    },
+    {
+      "id": "allow-3",
+      "subject": "EvalCustomer-04.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 5.1230750000000285
+    },
+    {
+      "id": "clarify-3",
+      "subject": "EvalCustomer-04.Launch",
+      "field": "security_tier",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.6438819999999623
+    },
+    {
+      "id": "block-4",
+      "subject": "EvalCustomer-05.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 5.331637000000001
+    },
+    {
+      "id": "allow-4",
+      "subject": "EvalCustomer-05.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 5.169922999999983
+    },
+    {
+      "id": "clarify-4",
+      "subject": "EvalCustomer-05.Launch",
+      "field": "dpa_status",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.5412999999999784
+    },
+    {
+      "id": "block-5",
+      "subject": "EvalCustomer-06.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 5.377313000000015
+    },
+    {
+      "id": "allow-5",
+      "subject": "EvalCustomer-06.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 5.419591000000025
+    },
+    {
+      "id": "clarify-5",
+      "subject": "EvalCustomer-06.Launch",
+      "field": "region",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.592314999999985
+    },
+    {
+      "id": "block-6",
+      "subject": "EvalCustomer-07.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 5.892582000000004
+    },
+    {
+      "id": "allow-6",
+      "subject": "EvalCustomer-07.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 4.834672000000012
+    },
+    {
+      "id": "clarify-6",
+      "subject": "EvalCustomer-07.Launch",
+      "field": "support_tier",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.4607990000000086
+    },
+    {
+      "id": "block-7",
+      "subject": "EvalCustomer-08.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 5.233141999999987
+    },
+    {
+      "id": "allow-7",
+      "subject": "EvalCustomer-08.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 4.13065499999999
+    },
+    {
+      "id": "clarify-7",
+      "subject": "EvalCustomer-08.Launch",
+      "field": "contract_term",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.461749999999995
+    },
+    {
+      "id": "block-8",
+      "subject": "EvalCustomer-09.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 5.078432000000021
+    },
+    {
+      "id": "allow-8",
+      "subject": "EvalCustomer-09.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 5.045829999999967
+    },
+    {
+      "id": "clarify-8",
+      "subject": "EvalCustomer-09.Launch",
+      "field": "sla_minutes",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.3294929999999567
+    },
+    {
+      "id": "block-9",
+      "subject": "EvalCustomer-10.Launch",
+      "field": "launch_date",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "externalLatencyMs": 5.340463999999997
+    },
+    {
+      "id": "allow-9",
+      "subject": "EvalCustomer-10.Launch",
+      "field": "launch_date",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "externalLatencyMs": 5.2464370000000145
+    },
+    {
+      "id": "clarify-9",
+      "subject": "EvalCustomer-10.Launch",
+      "field": "legal_entity",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "externalLatencyMs": 3.508418000000006
+    }
+  ]
+}

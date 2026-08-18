@@ -70,11 +70,11 @@ npm test
 npm run evaluate:live
 ```
 
-`CG-LIVE-EVAL-30-v2` contains 30 distinct actions and assertions: ten supported current actions, ten superseded actions, and ten unsupported actions across ten separately named customers. The live runner writes those fixtures to HydraDB, reads each evidence graph back through HTTP OpenCypher, computes the decision from the returned rows, and measures the complete read-plus-decision duration outside the policy engine. It writes results only after a successful live run to `evidence/live-evaluation.json`.
+`CG-LIVE-EVAL-30-v2` contains 30 distinct actions and assertions: ten supported current actions, ten superseded actions, and ten unsupported actions across ten separately named customers. The live runner writes those fixtures to HydraDB, reads each evidence graph back through HTTP OpenCypher, computes the decision from the returned rows, and measures the complete read-plus-decision duration outside the policy engine.
 
-No accuracy or latency result is claimed in this repository until that live artifact exists. The fixtures are synthetic and any resulting metrics apply only to this deterministic demo suite.
+The reviewed [live HydraDB CI run](https://github.com/lsh2546/contextgate-hack-hydra-2026/actions/runs/32094397771) produced the committed evidence artifacts. On that single GitHub-hosted Ubuntu run, all 30 expected decisions matched, no non-ALLOW case was authorized, and externally measured read-plus-decision p95 was 5.89 ms. These are synthetic deterministic demo-suite results, not production performance or general model-accuracy claims.
 
-The `Live HydraDB verification` GitHub Actions workflow runs the same sequence on Ubuntu using the official image. It uploads the container log, every HTTP query/response, three live demo decisions, and the 30-case evaluation as downloadable CI evidence.
+The `Live HydraDB verification` GitHub Actions workflow runs the same sequence on Ubuntu using the official image. It uploads the container log, every HTTP query/response, three live demo decisions, and the 30-case evaluation as downloadable CI evidence. Reviewed copies are preserved in `evidence/`.
 
 ## Architecture
 

@@ -1,0 +1,73 @@
+{
+  "generatedAt": "2026-08-18T03:08:49.823Z",
+  "results": [
+    {
+      "id": "act-block",
+      "expected": "BLOCK",
+      "actual": "BLOCK",
+      "backend": "hydradb",
+      "externalLatencyMs": 57.447192,
+      "path": [
+        {
+          "from": "Sales Agent",
+          "relationship": "PROPOSES",
+          "to": "launch-old",
+          "label": "Claim: 2026-08-30"
+        },
+        {
+          "from": "launch-old",
+          "relationship": "SUPERSEDED_BY",
+          "to": "launch-new",
+          "label": "Current claim: 2026-09-14"
+        },
+        {
+          "from": "launch-new",
+          "relationship": "DERIVED_FROM",
+          "to": "src-linear",
+          "label": "Linear evidence"
+        }
+      ]
+    },
+    {
+      "id": "act-allow",
+      "expected": "ALLOW",
+      "actual": "ALLOW",
+      "backend": "hydradb",
+      "externalLatencyMs": 11.658698999999999,
+      "path": [
+        {
+          "from": "Sales Agent",
+          "relationship": "USES",
+          "to": "launch-gh",
+          "label": "Current claim: 2026-09-14"
+        },
+        {
+          "from": "launch-gh",
+          "relationship": "DERIVED_FROM",
+          "to": "src-gh",
+          "label": "GitHub evidence"
+        },
+        {
+          "from": "launch-new",
+          "relationship": "DERIVED_FROM",
+          "to": "src-linear",
+          "label": "Linear evidence"
+        },
+        {
+          "from": "launch-slack",
+          "relationship": "DERIVED_FROM",
+          "to": "src-slack",
+          "label": "Slack evidence"
+        }
+      ]
+    },
+    {
+      "id": "act-clarify",
+      "expected": "CLARIFY",
+      "actual": "CLARIFY",
+      "backend": "hydradb",
+      "externalLatencyMs": 13.903037000000012,
+      "path": []
+    }
+  ]
+}
