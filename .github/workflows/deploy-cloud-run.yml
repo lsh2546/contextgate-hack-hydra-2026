@@ -1,0 +1,60 @@
+name: Deploy public HydraDB demo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  PROJECT_ID: prizepilot-ai-lsh2546
+  REGION: asia-northeast3
+  REPOSITORY: contextgate
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: projects/820465172889/locations/global/workloadIdentityPools/github-actions/providers/contextgate-github
+          service_account: contextgate-deployer@prizepilot-ai-lsh2546.iam.gserviceaccount.com
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - name: Authenticate Docker to Artifact Registry
+        run: gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+
+      - name: Build and push ContextGate
+        run: |
+          docker build -f deploy/Dockerfile.app -t "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/app:${GITHUB_SHA}" .
+          docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/app:${GITHUB_SHA}"
+
+      - name: Build and push HydraDB sidecar
+        run: |
+          docker build -f deploy/Dockerfile.hydradb -t "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/hydradb:${GITHUB_SHA}" .
+          docker push "${REGION}-docker.pkg.dev/${PROJECT_ID}/${REPOSITORY}/hydradb:${GITHUB_SHA}"
+
+      - name: Render immutable image references
+        run: |
+          sed -i "s|contextgate/app:latest|contextgate/app:${GITHUB_SHA}|" deploy/cloud-run-service.yaml
+          sed -i "s|contextgate/hydradb:latest|contextgate/hydradb:${GITHUB_SHA}|" deploy/cloud-run-service.yaml
+
+      - name: Deploy Cloud Run service
+        run: gcloud run services replace deploy/cloud-run-service.yaml --region "$REGION" --project "$PROJECT_ID" --quiet
+
+      - name: Allow public access
+        run: gcloud run services add-iam-policy-binding contextgate --region "$REGION" --project "$PROJECT_ID" --member=allUsers --role=roles/run.invoker --quiet
+
+      - name: Verify public live HydraDB decisions
+        run: |
+          URL="$(gcloud run services describe contextgate --region "$REGION" --project "$PROJECT_ID" --format='value(status.url)')"
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent "$URL/api/state" >/dev/null; then break; fi
+            sleep 2
+          done
+          BASE_URL="$URL" node scripts/verify-live-decisions.js
+          echo "Public demo: $URL" >> "$GITHUB_STEP_SUMMARY"

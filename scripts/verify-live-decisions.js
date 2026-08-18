@@ -7,10 +7,11 @@ const expected = new Map([
   ["act-clarify", "CLARIFY"]
 ]);
 const results = [];
+const baseUrl = process.env.BASE_URL || "http://127.0.0.1:4173";
 
 for (const [id, verdict] of expected) {
   const started = performance.now();
-  const response = await fetch(`http://127.0.0.1:4173/api/evaluate/${id}`, { method: "POST" });
+  const response = await fetch(`${baseUrl}/api/evaluate/${id}`, { method: "POST" });
   const body = await response.json();
   assert.equal(response.ok, true, JSON.stringify(body));
   assert.equal(body.backend, "hydradb");
@@ -20,4 +21,3 @@ for (const [id, verdict] of expected) {
 
 await writeFile(new URL("../evidence/live-decisions.json", import.meta.url), `${JSON.stringify({ generatedAt: new Date().toISOString(), results }, null, 2)}\n`);
 console.log(JSON.stringify(results, null, 2));
-

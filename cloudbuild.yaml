@@ -1,0 +1,8 @@
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "deploy/Dockerfile.app", "-t", "asia-northeast3-docker.pkg.dev/$PROJECT_ID/contextgate/app:latest", "."]
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "deploy/Dockerfile.hydradb", "-t", "asia-northeast3-docker.pkg.dev/$PROJECT_ID/contextgate/hydradb:latest", "."]
+images:
+  - asia-northeast3-docker.pkg.dev/$PROJECT_ID/contextgate/app:latest
+  - asia-northeast3-docker.pkg.dev/$PROJECT_ID/contextgate/hydradb:latest

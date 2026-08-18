@@ -50,4 +50,20 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-server.listen(port, () => console.log(`ContextGate running at http://127.0.0.1:${port}`));
+async function prepareHydraDB() {
+  if (hydra.mode === "memory" || process.env.HYDRADB_AUTO_SEED !== "true") return;
+  const attempts = Number(process.env.HYDRADB_STARTUP_ATTEMPTS || 90);
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    const status = await hydra.health();
+    if (status.connected) {
+      await hydra.seed();
+      console.log(`HydraDB live graph ready after ${attempt} attempt(s)`);
+      return;
+    }
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  }
+  throw new Error("HydraDB did not become ready; refusing to start in fail-closed mode");
+}
+
+await prepareHydraDB();
+server.listen(port, "0.0.0.0", () => console.log(`ContextGate running at http://0.0.0.0:${port}`));

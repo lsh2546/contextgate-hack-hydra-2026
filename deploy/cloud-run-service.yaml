@@ -1,0 +1,85 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: contextgate
+  namespace: prizepilot-ai-lsh2546
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: "0"
+        autoscaling.knative.dev/maxScale: "1"
+        run.googleapis.com/execution-environment: gen2
+    spec:
+      containerConcurrency: 20
+      timeoutSeconds: 60
+      containers:
+        - name: app
+          image: asia-northeast3-docker.pkg.dev/prizepilot-ai-lsh2546/contextgate/app:latest
+          ports:
+            - name: http1
+              containerPort: 8080
+          env:
+            - name: PORT
+              value: "8080"
+            - name: HYDRADB_MODE
+              value: hydra
+            - name: HYDRADB_URL
+              value: http://127.0.0.1:8443
+            - name: HYDRADB_AUTO_SEED
+              value: "true"
+            - name: HYDRADB_AUDIT_PATH
+              value: /tmp/contextgate/hydradb-roundtrip.jsonl
+          resources:
+            limits:
+              cpu: "1"
+              memory: 512Mi
+        - name: hydradb
+          image: asia-northeast3-docker.pkg.dev/prizepilot-ai-lsh2546/contextgate/hydradb:latest
+          env:
+            - name: CLOUD_PROVIDER
+              value: local
+            - name: LOCAL_PATH
+              value: /data/store
+            - name: GRAPH_NAMESPACE
+              value: default
+            - name: GRAPH_ID
+              value: default
+            - name: GRAPH_CELL_ID
+              value: cell-0
+            - name: GRAPH_CELLS
+              value: cell-0
+            - name: GRAPH_NODE_ID
+              value: node-0
+            - name: GRAPH_BOLT_NODE_ADDRESSES
+              value: node-0=127.0.0.1:7687
+            - name: GRAPH_ADVERTISED_BOLT_ADDR
+              value: 127.0.0.1:7687
+            - name: GRAPH_DATA_CACHE_DIR
+              value: /data/cache
+            - name: GRAPH_AUTH_TOKEN_FILE
+              value: /opt/contextgate/auth-token
+            - name: GRAPH_ALLOW_PLAINTEXT
+              value: "true"
+            - name: RUST_MIN_STACK
+              value: "33554432"
+          resources:
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          volumeMounts:
+            - name: hydra-store
+              mountPath: /data/store
+            - name: hydra-cache
+              mountPath: /data/cache
+      volumes:
+        - name: hydra-store
+          emptyDir:
+            medium: Memory
+            sizeLimit: 384Mi
+        - name: hydra-cache
+          emptyDir:
+            medium: Memory
+            sizeLimit: 128Mi
