@@ -110,7 +110,10 @@ export class HydraDBClient {
   }
 
   decodeRows(payload) {
-    const unwrap = value => value && typeof value === "object" && "value" in value ? value.value : value;
+    const unwrap = value => {
+      if (value && typeof value === "object" && value.type === "null") return null;
+      return value && typeof value === "object" && "value" in value ? value.value : value;
+    };
     const columns = payload.columns || payload.keys || payload.fields;
     const rows = payload.rows || payload.records || payload.data;
     if (!Array.isArray(columns) || !Array.isArray(rows)) throw new Error("Unrecognized HydraDB HTTP row format");

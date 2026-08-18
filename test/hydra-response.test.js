@@ -20,3 +20,11 @@ test("HydraDB record wrappers decode into named properties", () => {
   assert.deepEqual(rows, [{ id: "claim-2", status: "current" }]);
 });
 
+test("HydraDB typed null values decode to JavaScript null", () => {
+  const client = new HydraDBClient({ HYDRADB_MODE: "memory" });
+  const rows = client.decodeRows({
+    columns: ["superseded_by"],
+    rows: [[{ type: "null" }]]
+  });
+  assert.deepEqual(rows, [{ superseded_by: null }]);
+});
