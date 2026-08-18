@@ -44,7 +44,9 @@ export class HydraDBClient {
   async health() {
     if (this.mode === "memory") return { mode: "memory", connected: false, label: "Deterministic graph replica" };
     try {
-      await this.query("MATCH (n) RETURN count(n) AS count");
+      // HydraDB's current HTTP OpenCypher engine accepts node reads, but not
+      // count(n). This query succeeds both before and after the graph is seeded.
+      await this.query("MATCH (n) RETURN n.id AS id LIMIT 1");
       this.connected = true;
       return { mode: "hydradb", connected: true, label: "HydraDB OpenCypher · causal snapshot" };
     } catch (error) {
@@ -57,12 +59,23 @@ export class HydraDBClient {
     const sourceId = id => 2001 + sources.findIndex(s => s.id === id);
     const claimId = id => 1001 + claims.findIndex(c => c.id === id);
     const aliasId = index => 3001 + index;
+    const claimNode = c => `:Claim {id:${claimId(c.id)}, claim_id:'${c.id}', subject:'${c.subject}', field:'${c.field}', value:'${c.value}', status:'${c.status}', at:'${c.at}'}`;
+    const sourceNode = s => `:Source {id:${sourceId(s.id)}, source_id:'${s.id}', kind:'${s.kind}', authority:${s.authority}, at:'${s.at}'}`;
+    // HydraDB 0.1.x executes CREATE/MERGE as one-hop edge patterns. Creating
+    // isolated nodes first is therefore both unnecessary and unsupported.
     const statements = [
-      ...sources.map(s => `CREATE (:Source {id:${sourceId(s.id)}, source_id:'${s.id}', kind:'${s.kind}', authority:${s.authority}, at:'${s.at}'})`),
-      ...claims.map(c => `CREATE (:Claim {id:${claimId(c.id)}, claim_id:'${c.id}', subject:'${c.subject}', field:'${c.field}', value:'${c.value}', status:'${c.status}', at:'${c.at}'})`),
-      ...aliases.map((a, i) => `CREATE (:Alias {id:${aliasId(i)}, alias_id:'alias-${i}', value:'${a.alias}', canonical:'${a.canonical}', confidence:${a.confidence}})`),
-      ...claims.map(c => `MATCH (c:Claim {id:${claimId(c.id)}}), (s:Source {id:${sourceId(c.source)}}) CREATE (c)-[:DERIVED_FROM]->(s)`),
-      ...claims.filter(c => c.supersedes).map(c => `MATCH (a:Claim {id:${claimId(c.id)}}), (b:Claim {id:${claimId(c.supersedes)}}) CREATE (a)-[:SUPERSEDES]->(b)`)
+      ...claims.map(c => {
+        const source = sources.find(s => s.id === c.source);
+        return `MERGE (c${claimNode(c)})-[:DERIVED_FROM]->(s${sourceNode(source)})`;
+      }),
+      ...claims.filter(c => c.supersedes).map(c => {
+        const older = claims.find(item => item.id === c.supersedes);
+        return `MERGE (newer${claimNode(c)})-[:SUPERSEDES]->(older${claimNode(older)})`;
+      }),
+      ...aliases.map((a, i) => {
+        const target = claims.find(c => c.subject === a.canonical) || claims[0];
+        return `MERGE (a:Alias {id:${aliasId(i)}, alias_id:'alias-${i}', value:'${a.alias}', canonical:'${a.canonical}', confidence:${a.confidence}})-[:SAME_AS]->(c${claimNode(target)})`;
+      })
     ];
     const results = [];
     for (const statement of statements) results.push(await this.query(statement, "strong"));
@@ -72,11 +85,26 @@ export class HydraDBClient {
   async evidenceGraph(subject, field) {
     const escape = value => String(value).replaceAll("\\", "\\\\").replaceAll("'", "\\'");
     const result = await this.query(
-      `MATCH (c:Claim)-[:DERIVED_FROM]->(s:Source) WHERE c.subject='${escape(subject)}' AND c.field='${escape(field)}' OPTIONAL MATCH (c)-[:SUPERSEDES]->(old:Claim) RETURN c.claim_id AS id, c.subject AS subject, c.field AS field, c.value AS value, c.status AS status, c.at AS at, s.source_id AS source, s.kind AS source_kind, s.authority AS source_authority, old.claim_id AS supersedes`,
+      `MATCH (c:Claim {subject:'${escape(subject)}', field:'${escape(field)}'})-[:DERIVED_FROM]->(s:Source) OPTIONAL MATCH (newer:Claim)-[:SUPERSEDES]->(c) RETURN c.claim_id AS id, c.subject AS subject, c.field AS field, c.value AS value, c.status AS stored_status, c.at AS at, s.source_id AS source, s.kind AS source_kind, s.authority AS source_authority, newer.claim_id AS superseded_by`,
       "strong"
     );
     const rows = this.decodeRows(result);
-    const selectedClaims = rows.map(row => ({ id: row.id, subject: row.subject, field: row.field, value: row.value, status: row.status, at: row.at, source: row.source, ...(row.supersedes ? { supersedes: row.supersedes } : {}) }));
+    const selectedClaims = rows.map(row => ({
+      id: row.id,
+      subject: row.subject,
+      field: row.field,
+      value: row.value,
+      // The live SUPERSEDES edge takes precedence over a stored label.
+      status: row.superseded_by ? "superseded" : row.stored_status,
+      at: row.at,
+      source: row.source,
+      ...(row.superseded_by ? { supersededBy: row.superseded_by } : {})
+    }));
+    for (const claim of selectedClaims) {
+      if (!claim.supersededBy) continue;
+      const replacement = selectedClaims.find(candidate => candidate.id === claim.supersededBy);
+      if (replacement) replacement.supersedes = claim.id;
+    }
     const selectedSources = [...new Map(rows.map(row => [row.source, { id: row.source, kind: row.source_kind, authority: Number(row.source_authority), at: row.at }])).values()];
     return { sources: selectedSources, claims: selectedClaims, aliases: [] };
   }

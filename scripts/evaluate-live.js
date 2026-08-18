@@ -10,18 +10,16 @@ if (!status.connected) throw new Error(`Live evaluation requires HydraDB: ${stat
 
 const suite = buildEvaluationSuite();
 for (const group of suite.groups) {
-  for (let i = 0; i < group.sources.length; i++) {
-    const source = group.sources[i];
-    await hydra.query(`CREATE (:Source {id:${group.baseId + i}, source_id:${quote(source.id)}, kind:${quote(source.kind)}, authority:${source.authority}, at:${quote(source.at)}})`, "strong");
-  }
   for (let i = 0; i < group.claims.length; i++) {
     const claim = group.claims[i];
-    await hydra.query(`CREATE (:Claim {id:${group.baseId + 5 + i}, claim_id:${quote(claim.id)}, subject:${quote(claim.subject)}, field:${quote(claim.field)}, value:${quote(claim.value)}, status:${quote(claim.status)}, at:${quote(claim.at)}})`, "strong");
-    await hydra.query(`MATCH (c:Claim {id:${group.baseId + 5 + i}}), (s:Source {id:${group.baseId + group.sources.findIndex(source => source.id === claim.source)}}) CREATE (c)-[:DERIVED_FROM]->(s)`, "strong");
+    const sourceIndex = group.sources.findIndex(source => source.id === claim.source);
+    const source = group.sources[sourceIndex];
+    await hydra.query(`MERGE (c:Claim {id:${group.baseId + 5 + i}, claim_id:${quote(claim.id)}, subject:${quote(claim.subject)}, field:${quote(claim.field)}, value:${quote(claim.value)}, status:${quote(claim.status)}, at:${quote(claim.at)}})-[:DERIVED_FROM]->(s:Source {id:${group.baseId + sourceIndex}, source_id:${quote(source.id)}, kind:${quote(source.kind)}, authority:${source.authority}, at:${quote(source.at)}})`, "strong");
   }
   const newer = group.claims[1];
   const older = group.claims[0];
-  await hydra.query(`MATCH (a:Claim {id:${group.baseId + 5 + group.claims.indexOf(newer)}}), (b:Claim {id:${group.baseId + 5 + group.claims.indexOf(older)}}) CREATE (a)-[:SUPERSEDES]->(b)`, "strong");
+  const claimPattern = (claim, index) => `:Claim {id:${group.baseId + 5 + index}, claim_id:${quote(claim.id)}, subject:${quote(claim.subject)}, field:${quote(claim.field)}, value:${quote(claim.value)}, status:${quote(claim.status)}, at:${quote(claim.at)}}`;
+  await hydra.query(`MERGE (newer${claimPattern(newer, group.claims.indexOf(newer))})-[:SUPERSEDES]->(older${claimPattern(older, group.claims.indexOf(older))})`, "strong");
 }
 
 const results = [];
