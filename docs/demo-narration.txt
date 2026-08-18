@@ -1,0 +1,11 @@
+An AI sales agent is about to tell Acme that Project Phoenix launches on August thirtieth. Before the email can be sent, ContextGate queries the live HydraDB evidence graph.
+
+The action is blocked. HydraDB shows that the August date was superseded by September fourteenth, with the replacement claim derived from authoritative Linear evidence.
+
+When the agent uses the corrected September date, the same policy allows the action. Current evidence from Linear, Slack, and GitHub agrees.
+
+Next, the agent tries to set an unsupported data residency value. No qualifying evidence path exists, so ContextGate returns clarify and requires human input instead of inventing an answer.
+
+This is why ContextGate needs a graph database. HydraDB preserves identity, temporal supersession, source provenance, and the exact path that authorized or blocked each action.
+
+In one reproducible GitHub-hosted run over thirty distinct synthetic assertions, ContextGate matched all expected decisions, produced zero false authorizations, and measured five point eight nine milliseconds p ninety-five external read-plus-decision latency. ContextGate: evidence before agent action.

@@ -19,12 +19,23 @@ jobs:
         run: |
           npm install --no-save playwright
           npx playwright install --with-deps chromium
+          python -m pip install edge-tts
       - name: Record BLOCK ALLOW and CLARIFY from public HydraDB demo
         env:
           DEMO_URL: https://contextgate-u4dj5xorbq-du.a.run.app/
         run: node scripts/record-public-demo.js
+      - name: Generate English narration
+        run: edge-tts --voice en-US-AvaNeural --file docs/demo-narration.txt --write-media recordings/narration.mp3
+      - name: Produce narrated and captioned submission MP4
+        run: |
+          ffmpeg -y -i recordings/contextgate-public-demo.webm -i recordings/narration.mp3 \
+            -vf "subtitles=docs/demo-captions.srt:force_style='FontName=DejaVu Sans,FontSize=22,PrimaryColour=&H00FFFFFF,OutlineColour=&H00101010,BorderStyle=3,Outline=1,Shadow=0,MarginV=34,Alignment=2'" \
+            -c:v libx264 -preset medium -crf 20 -pix_fmt yuv420p -movflags +faststart \
+            -c:a aac -b:a 160k -af apad -shortest recordings/contextgate-submission-demo.mp4
       - uses: actions/upload-artifact@v4
         with:
           name: contextgate-public-demo-recording
-          path: recordings/contextgate-public-demo.webm
+          path: |
+            recordings/contextgate-public-demo.webm
+            recordings/contextgate-submission-demo.mp4
           if-no-files-found: error

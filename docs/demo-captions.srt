@@ -1,0 +1,23 @@
+1
+00:00:00,000 --> 00:00:04,500
+ContextGate verifies evidence before an enterprise AI agent acts.
+
+2
+00:00:04,500 --> 00:00:17,500
+BLOCK — August 30 was superseded by September 14 in the live HydraDB graph.
+
+3
+00:00:17,500 --> 00:00:29,500
+ALLOW — Current Linear, Slack, and GitHub evidence supports the corrected date.
+
+4
+00:00:29,500 --> 00:00:41,500
+CLARIFY — No qualifying path exists, so the agent asks a human.
+
+5
+00:00:41,500 --> 00:00:50,000
+HydraDB preserves identity, time, provenance, and explainable evidence paths.
+
+6
+00:00:50,000 --> 00:01:08,000
+Reproducible CI: 30 distinct synthetic assertions, 30 expected decisions, zero false authorizations, and 5.89 ms external p95.

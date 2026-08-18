@@ -17,9 +17,9 @@ await page.locator("#dbLabel").filter({ hasText: "HydraDB" }).waitFor({ timeout:
 await page.waitForTimeout(4000);
 
 for (const scene of [
-  { title: "Send launch confirmation", verdict: "BLOCK", pause: 9000 },
-  { title: "Send corrected launch update", verdict: "ALLOW", pause: 8000 },
-  { title: "Change data residency", verdict: "CLARIFY", pause: 8000 }
+  { title: "Send launch confirmation", verdict: "BLOCK", pause: 11000 },
+  { title: "Send corrected launch update", verdict: "ALLOW", pause: 10000 },
+  { title: "Change data residency", verdict: "CLARIFY", pause: 10000 }
 ]) {
   await page.locator(".action-item", { hasText: scene.title }).click();
   await page.waitForTimeout(1800);
@@ -29,7 +29,12 @@ for (const scene of [
 }
 
 await page.locator(".proof").scrollIntoViewIfNeeded();
-await page.waitForTimeout(7000);
+await page.waitForTimeout(8000);
+await page.goto("https://github.com/lsh2546/contextgate-hack-hydra-2026/actions/runs/32095767381", {
+  waitUntil: "domcontentloaded",
+  timeout: 120000
+});
+await page.waitForTimeout(12000);
 await context.close();
 await video.saveAs("recordings/contextgate-public-demo.webm");
 await browser.close();
