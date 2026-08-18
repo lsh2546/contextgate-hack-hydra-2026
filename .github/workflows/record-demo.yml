@@ -1,0 +1,30 @@
+name: Record public HydraDB demo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install recording browser
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Record BLOCK ALLOW and CLARIFY from public HydraDB demo
+        env:
+          DEMO_URL: https://contextgate-u4dj5xorbq-du.a.run.app/
+        run: node scripts/record-public-demo.js
+      - uses: actions/upload-artifact@v4
+        with:
+          name: contextgate-public-demo-recording
+          path: recordings/contextgate-public-demo.webm
+          if-no-files-found: error
